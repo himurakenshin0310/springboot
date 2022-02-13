@@ -1,0 +1,79 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="frontend/fragments :: header" />
+<body>
+	<div th:replace="frontend/fragments :: navbar" />
+
+
+	<div class="row mt-5">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<form th:action="@{/removeitem}" method="get">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Name</th>
+							<th scope="col">image</th>
+							<th scope="col">Quantity</th>
+							<th scope="col">Price</th>
+
+							<th colspan="2"><button type="submit">Delete</button></th>
+						</tr>
+					</thead>
+					<tbody>
+						<div th:if="${session.cart}">
+							<tr th:each="i, state :${session.cart.content}" )>
+								<th scope="row">[[${state.count}]]</th>
+								<td>[[${i.name}]]</td>
+								<td><img style="height: 30px; width: 50px;"
+									th:src="@{/upload/}+${i.image}" class="img-thumbail" /></td>
+								<td><input min="1" max="20" type="number"
+									th:onchange="changeQuantity([[${i.id}]])"
+									th:value="${i.quantity}" th:id="quantity-+${i.id}"></td>
+								<td th:id="price-+${i.id}">[[${i.price*i.quantity}]]</td>
+								<td><input name="id[]" th:value="${i.id}" type="checkbox"></td>
+								<td></td>
+							</tr>
+							<tr align="right">
+								<th id="total" colspan="6">Total Price:
+									[[${session.cart.totalPrice}]]</th>
+							</tr>
+						</div>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+
+	<script>
+		var check = false;
+		function changeQuantity(id) {
+			if (check)
+				return;
+			var val = $("#quantity-"+id).val();
+			$.ajax({
+				url : "[[@{/updateitem}]]",
+				type : "get",
+				data : {
+					"quantity" : val,
+					"id" : id
+				},
+				before : function() {
+					check = true;
+				}
+			}).done(function(result) {
+				if (result != null){
+					$("#quantity-"+id).attr("value", val);
+					$("#price-"+id).html(result.cartItem.price*result.cartItem.quantity);
+					$("#total").html(result.total);
+					check = false;
+				}				
+				console.log("run");
+			});
+		}
+	</script>
+	<div th:replace="frontend/fragments :: scripts" />
+</body>
+</html>

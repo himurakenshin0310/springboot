@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/backend/fragments :: header" />
+<body>
+
+	<div class="row">
+		<div class="col-md-2"><h3><a th:href="@{/admin/center}">center</a></h3></div>
+		<div class="col-md-8 mt-5">
+			<form method="post" enctype="multipart/form-data"
+				th:action="@{/admin/product/change/}+${product.id}">
+				<div class="form-group">
+					<label for="exampleInputEmail1">Name</label> <input type="text"
+						class="form-control" th:value="${product.name}" placeholder="Enter Name" name="name">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Image</label> <input id="value" type="file"
+						class="form-control" name="file">
+						<img id="img" style="height: 50px; width: 50px;" alt="" th:src="@{/upload/}+${product.image}">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Price</label> <input type="text"
+						class="form-control" th:value="${product.price}" name="price">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Decsription</label> <input
+						type="text" class="form-control" th:value="${product.description}" name="description">
+				</div>
+				<select class="custom-select" name="typeId">
+					<option th:each="item,istate:${types}" th:selected="${item.id == product.typeId}" th:value="${item.id}" th:utext="${item.name}"></option>
+				</select>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+	
+	<script>
+	$("#value").change(function(){
+		var file = $('input[type=file]').get(0).files[0];
+		if(file){
+			var reader = new FileReader();
+			reader.onload = function(){
+				$('#img').attr("src",reader.result);
+			};
+			 reader.readAsDataURL(file);
+		}
+	});
+			
+	</script>
+
+	<div th:replace="/backend/fragments :: scripts" />
+</body>
+</html>

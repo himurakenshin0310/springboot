@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/backend/fragments ::header" />
+<body>
+	<div class="row">
+		<div class="col-md-12">
+			<h3>
+				<a th:href="@{/admin/add-product}">them product</a>
+				<h3>
+					<a th:href="@{/admin/center}">center</a>
+				</h3>
+			</h3>
+		</div>
+		<div class="col-md-12">
+			<table class="table table-dark">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Tên sản phẩm</th>
+						<th scope="col">Hình ảnh</th>
+						<th scope="col">Giá</th>
+						<th>Mô tả</th>
+						<th>Loại</th>
+						<th>Bật</th>
+						<th colspan="2">Edit</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${products}">
+						<th scope="row" th:utext="${item.id}"></th>
+						<th scope="row" th:utext="${item.name}"></th>
+						<th scope="row"><img style="width: 100px; height: 50px;"
+							th:src="@{/upload/}+${item.image}"></th>
+						<th scope="row" th:utext="${item.price}"></th>
+						<th scope="row" th:utext="${item.description}"></th>
+						<th scope="row" th:utext="${item.type.name}"></th>
+						<th scope="row" th:utext="${item.enable}"></th>
+						<th scope="row"><a
+							th:href="@{/admin/product/change/}+${item.id}">Change</a></th>
+						<th th:if="${item.enable}" scope="row"><a
+							th:href="@{/admin/product/enable/}+${item.id}">disabale</a></th>
+						<th th:unless="${item.enable}" scope="row"><a
+							th:href="@{/admin/product/enable/}+${item.id}">enable</a></th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<nav th:replace="/backend/fragments :: paginate"></nav>
+
+
+	<div th:replace="/backend/fragments ::scripts" />
+</body>
+</html>

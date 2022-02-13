@@ -1,0 +1,79 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="frontend/fragments :: header" />
+<body>
+	<div th:replace="frontend/fragments :: navbar" />
+
+
+	<div class="row mt-5">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Name</th>
+						<th scope="col">image</th>
+						<th scope="col">Quantity</th>
+						<th scope="col">Price</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<div th:if="${session.cart}">
+						<tr th:each="i, state :${session.cart.content}" )>
+							<th scope="row">[[${state.count}]]</th>
+							<td>[[${i.name}]]</td>
+							<td><img style="height: 30px; width: 50px;"
+								th:src="@{/upload/}+${i.image}" class="img-thumbail" /></td>
+							<td>[[${i.quantity}]]</td>
+							<td th:id="price-+${i.id}">[[${i.price*i.quantity}]]</td>
+						</tr>
+						<tr align="right">
+							<th id="total" colspan="6">Total Price:
+								[[${session.cart.totalPrice}]]</th>
+						</tr>
+					</div>
+				</tbody>
+			</table>
+
+			<div id="payment" class="d-flex justify-content-center">
+				<button class="btn btn-primary">Pay</button>
+			</div>
+			<div>
+				<span id="succsess" style="display: none;" />
+			</div>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+
+	<script>
+		var check = false;
+		var token = $("meta[name='_csrf']").attr("content");
+		$("#payment").click(function() {
+			if (check)
+				return;
+			$.ajax({
+				url : "[[@{/paying}]]",
+				type : "post",
+				headers : {
+					"X-CSRF-TOKEN" : token
+				},
+				data : {},
+				before : function() {
+					check = true;
+				}
+			}).done(function(result) {
+				$("#succsess").css("display", "");
+				if (result != "") {
+					$("#succsess").html("Succsess!");
+					check = false;
+					console.log("run");
+				} else
+					$("#succsess").text("fail!");
+			});
+		})
+	</script>
+	<div th:replace="frontend/fragments :: scripts" />
+</body>
+</html>

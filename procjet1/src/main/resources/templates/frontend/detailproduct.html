@@ -1,0 +1,30 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="frontend/fragments :: header" />
+<body>
+	<div th:replace="frontend/fragments :: navbar" />
+
+
+	<div class="row mt-5">
+		<div class="col-md-4">
+			<img class="img-thumbnail" th:src="@{/upload/}+${product.image}">
+		</div>
+		<div class="col-md-8">
+			<h2>Name: [[${product.name}]]</h2>
+			<br>
+			<h3>Price: [[${product.price}]]</h3>
+			<br>
+			<h3>Description: [[${product.description}]]</h3>
+			<br>
+			<h3>Type: [[${product.type.name}]]</h3>
+			<form th:action="@{/add-cart?id=}+${product.id}" method="post">
+				<label>Quantity</label> <input name="quantity" value="1" type="number" min="1" max="20"><br>
+				<button type="submit">ADD TO CART</button>
+			</form>
+		</div>
+	</div>
+
+
+	<div th:replace="frontend/fragments :: scripts" />
+</body>
+</html>

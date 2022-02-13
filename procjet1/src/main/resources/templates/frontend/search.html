@@ -1,0 +1,88 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="frontend/fragments :: header" />
+<body>
+	<div th:replace="frontend/fragments :: navbar" />
+
+
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Search</h1>
+			<form th:action="@{/search}" method="post">
+				<input type="text" name="key"> <select name="type">
+					<option th:each="i, sate : ${types}" th:value="${i.id}">[[${i.name}]]</option>
+				</select>
+				<button type="submit">Search</button>
+				<h2 th:if="${type}">Total result:[[${result}]]</h2>
+			</form>
+		</div>
+		<div class="col-md-12">
+			<table class="table table-dark">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Tên sản phẩm</th>
+						<th scope="col">Hình ảnh</th>
+						<th scope="col">Giá</th>
+						<th>Mô tả</th>
+						<th>Loại</th>
+					</tr>
+				</thead>
+				<tbody id="body">
+					<tr th:each="item : ${products}">
+						<th scope="row" th:utext="${item.id}"></th>
+						<th scope="row"><a th:href="@{/detail/}+${item.id}"
+							th:utext="${item.name}"></a></th>
+						<th scope="row"><img style="width: 100px; height: 50px;"
+							th:src="@{/upload/}+${item.image}"></th>
+						<th scope="row" th:utext="${item.price}"></th>
+						<th scope="row" th:utext="${item.description}"></th>
+						<th scope="row" th:utext="${item.type.name}"></th>
+					</tr>
+				</tbody>
+			</table>
+			<center th:if="${key}"><button id="loadmore" class="btn btn-primary">Load more</button></center>
+		</div>
+	</div>
+
+
+
+	<script>
+		var page = 0;
+		var check = false;
+		$("#loadmore").click(function(){
+			page += 1;
+			$.ajax({
+				url:"[[@{/pagesearch}]]",
+				type:"get",
+				data:{
+					"page":page,
+					"key": '[[${key}]]',
+					"type": `[[${type}]]`
+				},before: function(){
+					check = true;
+				}
+			}).done(function(result){
+				$.each(result,function(key,value){
+					console.log(value.id);
+					$("#body").append('<tr>'+
+							'<th scope="row">'+value.id+'</th>'+
+							'<th scope="row"><a href="'+'[[@{/detail/}]]+'+value.id+'">'+value.name+'</a></th>'+
+							'<th scope="row"><img style="width: 100px; height: 50px;"'+
+								'src="'+'[[@{/upload/}]]'+value.image+'"></th>'+
+							'<th scope="row" >'+value.price+'</th>'+
+							'<th scope="row" >'+value.description+'</th>'+
+							'<th scope="row" >'+value.typeName+'</th>'
+							);
+				})				
+				check = false;
+			});
+		});
+			
+	</script>
+
+
+	<!-- 	<nav th:replace="/frontend/fragments :: paginate"></nav> -->
+	<div th:replace="frontend/fragments :: scripts" />
+</body>
+</html>
